@@ -1,0 +1,11 @@
+{
+  "name": "nodeurlmonitoring",
+  "version": "1.0.0",
+  "description": "Test node Js project that monitor up and down time the target url/link, included user authentication and authorization",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Md Ashraful Alam",
+  "license": "ISC"
+}
