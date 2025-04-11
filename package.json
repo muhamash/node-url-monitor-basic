@@ -4,7 +4,8 @@
   "description": "Test node Js project that monitor up and down time the target url/link, included user authentication and authorization",
   "main": "index.js",
   "scripts": {
-    "chalu": "nodemon index",
+    "chalu": "NODE_ENV=staging nodemon index",
+    "start": "NODE_ENV=production nodemon index",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Md Ashraful Alam",
