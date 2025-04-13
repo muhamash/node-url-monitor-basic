@@ -1,5 +1,5 @@
 const lib  = require( "../../utils/data" );
-const { hashing } = require("../../utils/helper")
+const { hashing, parsedJson } = require("../../utils/helper")
 
 const handler = {};
 
@@ -101,7 +101,36 @@ handler._users.post = ( requestProperties, callback ) =>
 
 handler._users.get = (requestProperties, callback) =>
 {
-    
+    const phoneNumber = typeof ( requestProperties.queryString.phoneNumber ) === 'string' && requestProperties.queryString.phoneNumber.trim().length === 11 ? requestProperties.queryString.phoneNumber : false;
+
+    if ( phoneNumber )
+    {
+        lib.read( 'users', phoneNumber, ( error, data ) =>
+        {
+            // console.log(error, data)
+            if ( !error && data )
+            {
+                const user = {...parsedJson( data )};
+
+                delete user.password;
+                callback( 200, {
+                    message: "found!!",
+                    user
+                })
+            } else
+            {
+                callback( 404, {
+                    message: 'requested user was not found from the database!'
+                } );
+            }
+        })
+    }
+    else
+    {
+        callback( 404, {
+            message: 'requested user was not found!!!'
+        })
+    }
 }
 
 handler._users.patch = (requestProperties, callback) =>

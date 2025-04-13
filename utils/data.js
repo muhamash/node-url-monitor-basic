@@ -7,9 +7,9 @@ lib.basedir = path.join(__dirname, '/../.data/');
 
 lib.read = (dir, file, callback) =>
 {
-    fs.readFile( `${lib.baseDir + dir}/${file}.json`, 'utf8', ( error, data ) =>
+    fs.readFile( `${lib.basedir + dir}/${file}.json`, 'utf8', ( err, data ) =>
     {
-        callback( error )
+        callback( err, data );
     } );
 }
 
