@@ -3,13 +3,21 @@ const path = require( 'path' );
 
 const lib = {};
 
-lib.baseDir = path.join( __dirname, '../.data/' );
+lib.basedir = path.join(__dirname, '/../.data/');
+
+lib.read = (dir, file, callback) =>
+{
+    fs.readFile( `${lib.baseDir + dir}/${file}.json`, 'utf8', ( error, data ) =>
+    {
+        callback( error )
+    } );
+}
 
 lib.create = function ( dir, file, data, callback )
 {
     // open file --> write
-    fs.open( lib.baseDir + dir + '/' + file + '.json' + 'wx', function ( error, fileDescriptor )
-    {
+    fs.open(`${lib.basedir + dir}/${file}.json`, 'wx', (error, fileDescriptor) => {
+        // console.log( error );
         if ( !error && fileDescriptor )
         { 
             const stringyData = JSON.stringify( data );
@@ -38,17 +46,9 @@ lib.create = function ( dir, file, data, callback )
         }
         else
         {
-            callback('could not create new file already exists!!', error)
+            callback('could not create new file already exists!!', error || error?.message)
         }
     } )
-}
-
-lib.read = (dir, file, callback) =>
-{
-    fs.readFile( `${lib.baseDir + dir}/${file}.json`, 'utf8', ( error, data ) =>
-    {
-        callback( error )
-    } );
 }
 
 lib.update = ( dir, file, data, callback ) =>
@@ -112,4 +112,4 @@ lib.delete = ( dir, file, callback ) =>
     })
 };
 
-module.export = lib;
+module.exports = lib;
