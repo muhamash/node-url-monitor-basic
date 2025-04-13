@@ -1,5 +1,5 @@
 const lib  = require( "../../utils/data" );
-const { hashing, parsedJson } = require("../../utils/helper")
+const {  parsedJson, hashing } = require("../../utils/helper")
 
 const handler = {};
 
@@ -67,12 +67,15 @@ handler._users.post = ( requestProperties, callback ) =>
                     password: hashing( password )
                 }
 
+                // console.log( userObject );
                 lib.create( 'users', phoneNumber, userObject, ( error ) =>
                 {
+                    delete userObject.password
                     if ( !error )
                     {
                         callback( 200, {
-                            message: "created!!"
+                            message: "created!!",
+                            userObject
                         })
                     }
                     else
@@ -107,7 +110,7 @@ handler._users.get = (requestProperties, callback) =>
     {
         lib.read( 'users', phoneNumber, ( error, data ) =>
         {
-            // console.log(error, data)
+            // console.log( error, data );
             if ( !error && data )
             {
                 const user = {...parsedJson( data )};
@@ -133,9 +136,77 @@ handler._users.get = (requestProperties, callback) =>
     }
 }
 
-handler._users.patch = (requestProperties, callback) =>
+handler._users.put = (requestProperties, callback) =>
 {
-    
+    const firstName = typeof ( requestProperties.body.firstName ) === 'string' && requestProperties.body.firstName.trim().length > 0 ? requestProperties.body.firstName : false;
+
+    const lastName = typeof ( requestProperties.body.lastName ) === 'string' && requestProperties.body.lastName.trim().length > 0 ? requestProperties.body.lastName : false;
+
+    const phoneNumber = typeof ( requestProperties.body.phoneNumber ) === 'string' && requestProperties.body.phoneNumber.trim().length === 11 ? requestProperties.body.phoneNumber : false;
+
+    const password = typeof ( requestProperties.body.password ) === 'string' && requestProperties.body.password.trim().length > 0 ? requestProperties.body.password : false;
+
+    if ( phoneNumber )
+    {
+        if ( firstName || lastName || password )
+        {
+            lib.read( 'users', phoneNumber, ( error, data ) =>
+            {
+                const userData = { ...parsedJson(data) };
+                console.log( userData, data );
+
+                if( !error && data ){
+                    if ( firstName )
+                    {
+                        userData.firstName = firstName
+                    }
+                    if ( lastName )
+                    {
+                        userData.lastName = lastName
+                    }
+                    if ( password )
+                    {
+                        userData.password = hashing(password)
+                    }
+
+                    lib.update( 'users', phoneNumber, userData, ( error ) =>
+                    {
+                        if ( !error )
+                        {
+                            callback( 200, {
+                                message: "updated!",
+                                userData
+                            })
+                        }
+                        else
+                        {
+                            callback( 500, {
+                                message: "error on server"
+                            } );
+                        }
+                    })
+                }
+                else
+                {
+                    callback( 400, {
+                        message: "error while reading the database"
+                    } );
+                }
+            })
+        }
+        else
+        {
+            callback( 400, {
+                message: "maybe body is not correctly passing through the functions!"
+            })
+        }
+    }
+    else
+    {
+        callback( 400, {
+            message: "Invalid phone number!"
+        })
+    }
 }
 
 handler._users.delete = (requestProperties, callback) =>

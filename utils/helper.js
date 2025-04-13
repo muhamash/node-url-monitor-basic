@@ -23,9 +23,12 @@ helper.parsedJson = (jsonString) =>
 
 helper.hashing = (str) =>
 {
+    // console.log(str)
     if ( typeof ( str ) === 'string' && str.length > 0 )
     {
-        const hash = crypto.createHmac( 'sha256', environment.secretKey ).update( str ).digest( 'hex' );
+        return crypto.createHmac( 'sha256', environment.secretKey ).update( str ).digest( 'hex' );
+
+        // return hash
     }
 }
 

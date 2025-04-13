@@ -20,6 +20,7 @@ lib.create = function ( dir, file, data, callback )
         // console.log( error );
         if ( !error && fileDescriptor )
         { 
+            console.log( data );
             const stringyData = JSON.stringify( data );
 
             fs.writeFile( fileDescriptor, stringyData, function ( error1 )
@@ -53,7 +54,7 @@ lib.create = function ( dir, file, data, callback )
 
 lib.update = ( dir, file, data, callback ) =>
 {
-    fs.open( `${lib.baseDir + dir}/${file}.json`, 'r+', ( error, fileDescriptor ) =>
+    fs.open( `${lib.basedir + dir}/${file}.json`, 'r+', ( error, fileDescriptor ) =>
     {
         if ( !error && fileDescriptor )
         { 
