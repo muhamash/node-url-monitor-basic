@@ -1,9 +1,9 @@
-const { routesHandler } = require( "./handlers/routeHandlers/routesHandlers" );
+const { routesHandler, homeRoute, testRoute } = require( "./handlers/routeHandlers/routesHandlers" );
 
 
 const routes = {
-    "test": routesHandler,
-    "": routesHandler,
+    "test": testRoute,
+    "": homeRoute,
 };
 
 module.exports = routes;
