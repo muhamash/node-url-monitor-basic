@@ -102,7 +102,7 @@ handler._users.post = ( requestProperties, callback ) =>
 
 };
 
-handler._users.get = (requestProperties, callback) =>
+handler._users.get = ( requestProperties, callback ) =>
 {
     const phoneNumber = typeof ( requestProperties.queryString.phoneNumber ) === 'string' && requestProperties.queryString.phoneNumber.trim().length === 11 ? requestProperties.queryString.phoneNumber : false;
 
@@ -113,28 +113,28 @@ handler._users.get = (requestProperties, callback) =>
             // console.log( error, data );
             if ( !error && data )
             {
-                const user = {...parsedJson( data )};
+                const user = { ...parsedJson( data ) };
 
                 delete user.password;
                 callback( 200, {
                     message: "found!!",
                     user
-                })
+                } )
             } else
             {
                 callback( 404, {
                     message: 'requested user was not found from the database!'
                 } );
             }
-        })
+        } )
     }
     else
     {
         callback( 404, {
             message: 'requested user was not found!!!'
-        })
+        } )
     }
-}
+};
 
 handler._users.put = (requestProperties, callback) =>
 {
@@ -209,9 +209,46 @@ handler._users.put = (requestProperties, callback) =>
     }
 }
 
-handler._users.delete = (requestProperties, callback) =>
+handler._users.delete = ( requestProperties, callback ) =>
 {
-    
-}
+    const phoneNumber = typeof ( requestProperties.queryString.phoneNumber ) === 'string' && requestProperties.queryString.phoneNumber.trim().length === 11 ? requestProperties.queryString.phoneNumber : false;
+
+    if ( phoneNumber )
+    {
+        lib.read( 'users', phoneNumber, ( error, data ) =>
+        {
+            // console.log( error, data );
+            if ( !error && data )
+            {
+                lib.delete( 'users', phoneNumber, ( error ) =>
+                {
+                    if ( !error )
+                    {
+                        callback( 200, {
+                            message: 'deleted!'
+                        } )
+                    }
+                    else
+                    {
+                        callback( 500, {
+                            message: 'there was an error on server'
+                        } )
+                    }
+                } )
+            } else
+            {
+                callback( 404, {
+                    message: 'requested user was not found from the database! or there is an error'
+                } );
+            }
+        } )
+    }
+    else
+    {
+        callback( 404, {
+            message: 'requested user was not found!!!'
+        } )
+    }
+};
 
 module.exports = handler;
