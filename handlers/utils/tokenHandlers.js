@@ -88,7 +88,54 @@ tokenHandlers.get = ( requestProperties, callback ) =>
 
 };
 
-tokenHandlers.put = () => { };
+tokenHandlers.put = ( requestProperties, callback ) =>
+{ 
+    const tokenId = typeof ( requestProperties.body.tokenId ) === 'string' && requestProperties.body.tokenId.trim().length === 20 ? requestProperties.body.tokenId : false;
+
+    const updateTokenExpiration = typeof ( requestProperties.body.update ) === 'boolean' && requestProperties.body.update === true ? true : false;
+
+    if ( tokenId && updateTokenExpiration )
+    {
+        lib.read( 'tokens', tokenId, ( error, tokenData ) =>
+        {
+            const parsedToken = parsedJson( tokenData );
+            
+            if ( parsedToken.expires > Date.now() )
+            {
+                parsedToken.expires = Date.now() + 60 + 60 * 1000;
+
+                lib.update( 'tokens', tokenId, parsedToken, ( error ) =>
+                {
+                    if ( !error )
+                    { 
+                        callback( 200, {
+                            message: "updated",
+                            token : parsedToken
+                        })
+                    }
+                    else
+                    {
+                        callback( 500, {
+                            message: 'server error!!'
+                        })
+                    }
+                })
+            }
+            else
+            {
+                callback( 400, {
+                    message: 'token expired!'
+                })
+            }
+        } );
+    } else
+    {
+        callback( 400, {
+            message:'there was something wrong!'
+        })
+    }
+
+};
 
 tokenHandlers.delete = () => { };
 
