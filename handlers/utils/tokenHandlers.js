@@ -179,4 +179,27 @@ tokenHandlers.delete = (requestProperties, callback) =>
     }
 };
 
+tokenHandlers.verify = (tokenId, phoneNumber, callback) =>
+{
+    lib.read( 'tokens', tokenId, ( error, tokenData ) =>
+    {
+        // console.log( tokenId, phoneNumber, tokenData );
+        if ( !error && tokenData )
+        {
+            if ( parsedJson( tokenData ).phoneNumber === phoneNumber && parsedJson( tokenData ).expires > Date.now() )
+            {
+                callback( true );
+            }
+            else
+            {
+                callback(false)
+            }
+        }
+        else
+        {
+            callback( false );
+        }
+    } );
+};
+
 module.exports = tokenHandlers;

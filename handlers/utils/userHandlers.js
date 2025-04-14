@@ -1,5 +1,6 @@
 const lib = require( "../../utils/data" );
 const { parsedJson, hashing } = require( "../../utils/helper" );
+const { verify } = require( "./tokenHandlers" );
 
 
 const userHandlers = {};
@@ -71,23 +72,40 @@ userHandlers.get = ( requestProperties, callback ) =>
 
     if ( phoneNumber )
     {
-        lib.read( 'users', phoneNumber, ( error, data ) =>
-        {
-            // console.log( error, data );
-            if ( !error && data )
-            {
-                const user = { ...parsedJson( data ) };
+        let token = typeof requestProperties.headers.token === 'string' ? requestProperties.headers.token : false;
 
-                delete user.password;
-                callback( 200, {
-                    message: "found!!",
-                    user
-                } )
-            } else
+        console.log(token, phoneNumber, token,typeof requestProperties.headers.token)
+
+        verify( token, phoneNumber, ( token ) =>
+        {      
+            if ( token )
             {
-                callback( 404, {
-                    message: 'requested user was not found from the database!'
-                } );
+                lib.read( 'users', phoneNumber, ( error, data ) =>
+                {
+
+                    // console.log( error, data );
+                    if ( !error && data )
+                    {
+                        const user = { ...parsedJson( data ) };
+
+                        delete user.password;
+                        callback( 200, {
+                            message: "found!!",
+                            user
+                        } )
+                    } else
+                    {
+                        callback( 404, {
+                            message: 'requested user was not found from the database!'
+                        } );
+                    }
+                } )
+            }
+            else
+            {
+                callback( 403, {
+                    message: "Authentication failed!"
+                } )
             }
         } )
     }
