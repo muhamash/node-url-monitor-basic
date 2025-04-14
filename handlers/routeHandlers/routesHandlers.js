@@ -1,5 +1,6 @@
 const lib  = require( "../../utils/data" );
 const {  parsedJson, hashing } = require("../../utils/helper");
+const checkUrlHandler = require( "../utils/checkUrlHandler" );
 const tokenHandlers = require( "../utils/tokenHandlers" );
 const userHandlers = require( "../utils/userHandlers" );
 
@@ -56,6 +57,15 @@ handler.userToken = ( requestProperties, callback ) =>
     }
 }
 
+handler.checkUrl = ( requestProperties, callback ) =>
+{
+    const acceptedMethods = ['get', 'post', 'put', 'delete'];
+    if (acceptedMethods.indexOf(requestProperties.method) > -1) {
+        checkUrlHandler[requestProperties.method](requestProperties, callback);
+    } else {
+        callback(405);
+    }
+};
 
 
 

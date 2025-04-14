@@ -135,13 +135,13 @@ userHandlers.put = ( requestProperties, callback ) =>
 
             verify( token, phoneNumber, ( token ) =>
             {
-                console.log(token, phoneNumber)
+                // console.log(token, phoneNumber)
                 if ( token )
                 {
                     lib.read( 'users', phoneNumber, ( error, data ) =>
                     {
                         const userData = { ...parsedJson( data ) };
-                        console.log( userData, data );
+                        // console.log( userData, data );
 
                         if ( !error && data )
                         {
