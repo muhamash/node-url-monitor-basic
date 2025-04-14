@@ -137,6 +137,46 @@ tokenHandlers.put = ( requestProperties, callback ) =>
 
 };
 
-tokenHandlers.delete = () => { };
+tokenHandlers.delete = (requestProperties, callback) =>
+{
+    const tokenId = typeof ( requestProperties.queryString.tokenId ) === 'string' && requestProperties.queryString.tokenId.trim().length === 20 ? requestProperties.queryString.tokenId : false;
+    
+    if ( tokenId )
+    {
+        lib.read( 'tokens', tokenId, ( error, data ) =>
+        {
+            // console.log( error, data );
+            if ( !error && data )
+            {
+                lib.delete( 'tokens', tokenId, ( error ) =>
+                {
+                    if ( !error )
+                    {
+                        callback( 200, {
+                            message: 'deleted!'
+                        } )
+                    }
+                    else
+                    {
+                        callback( 500, {
+                            message: 'there was an error on server'
+                        } )
+                    }
+                } )
+            } else
+            {
+                callback( 404, {
+                    message: 'requested user token was not found from the database! or there is an error'
+                } );
+            }
+        } )
+    }
+    else
+    {
+        callback( 404, {
+            message: 'requested user was not found!!!'
+        } )
+    }
+};
 
 module.exports = tokenHandlers;
