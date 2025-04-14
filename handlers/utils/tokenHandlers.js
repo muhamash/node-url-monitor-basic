@@ -56,7 +56,37 @@ tokenHandlers.post = (requestProperties, callback) =>
 
 };
 
-tokenHandlers.get = () => { };
+tokenHandlers.get = ( requestProperties, callback ) =>
+{ 
+    const tokenId = typeof ( requestProperties.queryString.tokenId ) === 'string' && requestProperties.queryString.tokenId.trim().length === 20 ? requestProperties.queryString.tokenId : false;
+
+    if ( tokenId )
+    {
+        lib.read( 'tokens', tokenId, ( error, tokenData ) =>
+        {
+            if ( !error )
+            { 
+                const parsedToken = parsedJson(tokenData)
+                callback( 200, {
+                    message: 'token found',
+                    token:parsedToken,
+                } );
+            }
+            else
+            {
+                callback( 400, {
+                    message:'something was wrong while getting the token!'
+                })
+            }
+        } );
+    } else
+    {
+        callback( 404, {
+            message: "token not found!"
+        })
+    }
+
+};
 
 tokenHandlers.put = () => { };
 
