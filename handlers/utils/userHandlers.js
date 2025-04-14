@@ -135,7 +135,7 @@ userHandlers.put = (requestProperties, callback) =>
                     lib.update( 'users', phoneNumber, userData, ( error ) =>
                     {
                         delete userData.password;
-                        
+
                         if ( !error )
                         {
                             callback( 200, {
@@ -215,5 +215,6 @@ userHandlers.delete = ( requestProperties, callback ) =>
         } )
     }
 };
+
 
 module.exports = userHandlers;

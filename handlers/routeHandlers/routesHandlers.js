@@ -1,5 +1,6 @@
 const lib  = require( "../../utils/data" );
 const {  parsedJson, hashing } = require("../../utils/helper");
+const tokenHandlers = require( "../utils/tokenHandlers" );
 const userHandlers = require( "../utils/userHandlers" );
 
 const handler = {};
@@ -37,6 +38,22 @@ handler.userRoute = ( requestProperties, callback ) =>
     // callback( 200, {
     //     message: "This is user handler"
     // })
+}
+
+handler.userToken = ( requestProperties, callback ) =>
+{
+    // console.log(userHandlers)
+    const acceptedMethods = [ 'get', 'post', 'put', 'delete' ];
+    if ( acceptedMethods.indexOf( requestProperties.method ) > -1 )
+    {
+        tokenHandlers[ requestProperties.method ]( requestProperties, callback );
+    }
+    else
+    {
+        callback( 405, {
+            message: "Brother your method is not allowed"
+        })
+    }
 }
 
 
