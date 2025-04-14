@@ -18,7 +18,7 @@ tokenHandlers.post = (requestProperties, callback) =>
             if ( hashedPass === parsedJson(user).password )
             {
                 let tokenId = generateRandStr( 20 );
-                let expires = Date.now() + 60 + 60 * 1000;
+                let expires = Date.now() + 60 + 60 + 60 * 1000;
                 let token = {
                     phoneNumber,
                     expires,
@@ -102,7 +102,7 @@ tokenHandlers.put = ( requestProperties, callback ) =>
             
             if ( parsedToken.expires > Date.now() )
             {
-                parsedToken.expires = Date.now() + 60 + 60 * 1000;
+                parsedToken.expires = Date.now() + 60 + 60 + 60 * 1000;
 
                 lib.update( 'tokens', tokenId, parsedToken, ( error ) =>
                 {
@@ -186,7 +186,7 @@ tokenHandlers.verify = (tokenId, phoneNumber, callback) =>
         // console.log( tokenId, phoneNumber, tokenData );
         if ( !error && tokenData )
         {
-            if ( parsedJson( tokenData ).phoneNumber === phoneNumber && parsedJson( tokenData ).expires > Date.now() )
+            if ( parsedJson( tokenData ).phoneNumber === phoneNumber && parsedJson( tokenData ).expires < Date.now() )
             {
                 callback( true );
             }

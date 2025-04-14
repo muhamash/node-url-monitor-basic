@@ -74,7 +74,7 @@ userHandlers.get = ( requestProperties, callback ) =>
     {
         let token = typeof requestProperties.headers.token === 'string' ? requestProperties.headers.token : false;
 
-        console.log(token, phoneNumber, token,typeof requestProperties.headers.token)
+        // console.log(token, phoneNumber, token,typeof requestProperties.headers.token)
 
         verify( token, phoneNumber, ( token ) =>
         {      
@@ -83,7 +83,7 @@ userHandlers.get = ( requestProperties, callback ) =>
                 lib.read( 'users', phoneNumber, ( error, data ) =>
                 {
 
-                    // console.log( error, data );
+                    console.log( error, data );
                     if ( !error && data )
                     {
                         const user = { ...parsedJson( data ) };
@@ -117,7 +117,7 @@ userHandlers.get = ( requestProperties, callback ) =>
     }
 };
 
-userHandlers.put = (requestProperties, callback) =>
+userHandlers.put = ( requestProperties, callback ) =>
 {
     const firstName = typeof ( requestProperties.body.firstName ) === 'string' && requestProperties.body.firstName.trim().length > 0 ? requestProperties.body.firstName : false;
 
@@ -131,66 +131,83 @@ userHandlers.put = (requestProperties, callback) =>
     {
         if ( firstName || lastName || password )
         {
-            lib.read( 'users', phoneNumber, ( error, data ) =>
+            let token = typeof requestProperties.headers.token === 'string' ? requestProperties.headers.token : false;
+
+            verify( token, phoneNumber, ( token ) =>
             {
-                const userData = { ...parsedJson(data) };
-                console.log( userData, data );
+                console.log(token, phoneNumber)
+                if ( token )
+                {
+                    lib.read( 'users', phoneNumber, ( error, data ) =>
+                    {
+                        const userData = { ...parsedJson( data ) };
+                        console.log( userData, data );
 
-                if( !error && data ){
-                    if ( firstName )
-                    {
-                        userData.firstName = firstName
-                    }
-                    if ( lastName )
-                    {
-                        userData.lastName = lastName
-                    }
-                    if ( password )
-                    {
-                        userData.password = hashing(password)
-                    }
-
-                    lib.update( 'users', phoneNumber, userData, ( error ) =>
-                    {
-                        delete userData.password;
-
-                        if ( !error )
+                        if ( !error && data )
                         {
-                            callback( 200, {
-                                message: "updated!",
-                                userData
-                            })
+                            if ( firstName )
+                            {
+                                userData.firstName = firstName
+                            }
+                            if ( lastName )
+                            {
+                                userData.lastName = lastName
+                            }
+                            if ( password )
+                            {
+                                userData.password = hashing( password )
+                            }
+
+                            lib.update( 'users', phoneNumber, userData, ( error ) =>
+                            {
+                                delete userData.password;
+
+                                if ( !error )
+                                {
+                                    callback( 200, {
+                                        message: "updated!",
+                                        userData
+                                    } )
+                                }
+                                else
+                                {
+                                    callback( 500, {
+                                        message: "error on server"
+                                    } );
+                                }
+                            } )
                         }
                         else
                         {
-                            callback( 500, {
-                                message: "error on server"
+                            callback( 400, {
+                                message: "error while reading the database"
                             } );
                         }
-                    })
+                    } )
                 }
                 else
                 {
-                    callback( 400, {
-                        message: "error while reading the database"
-                    } );
+                    callback( 403, {
+                        message: "Authentication failed!"
+                    } )  
                 }
-            })
+            } )
+           
         }
         else
         {
             callback( 400, {
                 message: "maybe body is not correctly passing through the functions!"
-            })
+            } )
         }
     }
     else
     {
         callback( 400, {
             message: "Invalid phone number!"
-        })
+        } )
     }
-}
+};
 
 userHandlers.delete = ( requestProperties, callback ) =>
 {
@@ -198,33 +215,50 @@ userHandlers.delete = ( requestProperties, callback ) =>
 
     if ( phoneNumber )
     {
-        lib.read( 'users', phoneNumber, ( error, data ) =>
+        let token = typeof requestProperties.headers.token === 'string' ? requestProperties.headers.token : false;
+
+        // console.log(token, phoneNumber, token,typeof requestProperties.headers.token)
+
+        verify( token, phoneNumber, ( token ) =>
         {
-            // console.log( error, data );
-            if ( !error && data )
+            if ( token )
             {
-                lib.delete( 'users', phoneNumber, ( error ) =>
+                lib.read( 'users', phoneNumber, ( error, data ) =>
                 {
-                    if ( !error )
+                    // console.log( error, data );
+                    if ( !error && data )
                     {
-                        callback( 200, {
-                            message: 'deleted!'
+                        lib.delete( 'users', phoneNumber, ( error ) =>
+                        {
+                            if ( !error )
+                            {
+                                callback( 200, {
+                                    message: 'deleted!'
+                                } )
+                            }
+                            else
+                            {
+                                callback( 500, {
+                                    message: 'there was an error on server'
+                                } )
+                            }
                         } )
-                    }
-                    else
+                    } else
                     {
-                        callback( 500, {
-                            message: 'there was an error on server'
-                        } )
+                        callback( 404, {
+                            message: 'requested user was not found from the database! or there is an error'
+                        } );
                     }
                 } )
-            } else
+            }
+            else
             {
-                callback( 404, {
-                    message: 'requested user was not found from the database! or there is an error'
-                } );
+                callback( 403, {
+                    message: "Authentication failed!"
+                } )
             }
         } )
+       
     }
     else
     {
