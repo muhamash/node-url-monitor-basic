@@ -1,7 +1,10 @@
 const http = require( 'http' );
 const { handleReqRes } = require( "./utils/handleReqRes" );
+const { sendTwilioSms } = require( './utils/notifications' );
 
 const app = {};
+
+sendTwilioSms();
 
 // configuration
 app.config = {
