@@ -28,12 +28,13 @@ const app = {};
 // // start the server
 // app.createServer();
 
-app.init()=> {
+app.init = () =>
+{
     // start the server
-    server.createServer();
+    server.init();
     // start the workers
     worker.init();
-}
+};
 
 app.init();
 

@@ -5,7 +5,7 @@ const { sendTwilioSms } = require( './notifications' );
 
 const server = {};
 
-sendTwilioSms();
+// sendTwilioSms();
 
 // configuration
 server.config = {

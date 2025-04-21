@@ -6,11 +6,11 @@ const notifications = {};
 
 notifications.sendTwilioSms = ( phone, msg, callback ) =>
 { 
-    const phone = typeof ( phone ) === 'string' && phone.trim().length === 11 ? phone.trim() : false;
+    const phoneNumber = typeof ( phone ) === 'string' && phone.trim().length === 11 ? phone.trim() : false;
 
     const userMsg = typeof ( msg ) === 'string' && msg.trim().length > 0 && msg.trim().length < 1600 ? msg.trim() : false;
 
-    if ( phone, userMsg )
+    if ( phoneNumber, userMsg )
     {
         const payload = {
             From: environmentToExport.twilio.fromPhone,
@@ -53,9 +53,7 @@ notifications.sendTwilioSms = ( phone, msg, callback ) =>
      }
     else
     {
-        callback(0000, {
-            message: "Given params are not satisfied!!"
-        })
+        callback('Given parameters were missing or invalid');
     }
 };
 
