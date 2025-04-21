@@ -1,8 +1,8 @@
 const lib  = require( "../../utils/data" );
 const {  parsedJson, hashing } = require("../../utils/helper");
-const checkUrlHandler = require( "../utils/checkUrlHandler" );
-const tokenHandlers = require( "../utils/tokenHandlers" );
-const userHandlers = require( "../utils/userHandlers" );
+const checkUrlHandler = require( "../methods/checkUrlHandler" );
+const tokenHandlers = require( "../methods/tokenHandlers" );
+const userHandlers = require( "../methods/userHandlers" );
 
 const handler = {};
 

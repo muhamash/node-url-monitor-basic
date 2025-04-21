@@ -1,1 +1,1 @@
-{"id":"0o462d2w9jsesm7s3q9h","userPhone":"11345678903","protocol":"https","url":"google.com","method":"GET","successCode":[200,201],"timeOfSecs":2}
+{"id":"0o462d2w9jsesm7s3q9h","userPhone":"11345678903","protocol":"https","url":"google.com","method":"GET","successCode":[200,201,301],"timeOfSecs":2,"state":"up","lastChecked":1745232474915}

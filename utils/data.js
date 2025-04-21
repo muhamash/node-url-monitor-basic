@@ -113,4 +113,24 @@ lib.delete = ( dir, file, callback ) =>
     } );
 };
 
+lib.list = ( dir, callback ) =>
+{
+    fs.readdir( `${lib.basedir + dir}/`, ( error, data ) =>
+    {
+        if ( !error && data && data.length > 0 )
+        {
+            const trimmedFileNames = [];
+            data.forEach( ( fileName ) =>
+            {
+                trimmedFileNames.push( fileName.replace( '.json', '' ) );
+            } );
+            callback( false, trimmedFileNames );
+        }
+        else
+        {
+            callback( error, [] );
+        }
+    } );
+}
+
 module.exports = lib;

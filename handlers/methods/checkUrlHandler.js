@@ -231,7 +231,7 @@ checkUrlHandler.put = ( requestProperties, callback ) =>
                         {
                             checkObject.method = method;
                         }
-                        if ( successCodes )
+                        if ( successCode )
                         {
                             checkObject.successCode = successCode;
                         }
